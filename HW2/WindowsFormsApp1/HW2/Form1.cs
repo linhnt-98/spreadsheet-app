@@ -71,7 +71,7 @@ namespace HW2
             // 3 different approaches' result
             text = "1. HashSet method: " + hashIntegers.Count.ToString() + " unique numbers.";
             text += Environment.NewLine;
-
+            text += "According to learn.microsoft.com, retrieving the value of this property is an O(1) operation.";
             text += Environment.NewLine;
             text += "2. O(1) storage method: " + count + " unique numbers.";
             text += Environment.NewLine;
