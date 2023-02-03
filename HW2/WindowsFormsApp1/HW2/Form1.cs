@@ -57,7 +57,16 @@ namespace HW2
                 }
             }
 
-
+            //Sort
+            listIntegers.Sort();
+            int sortedCount = 1;
+            for (int i = 1; i < listIntegers.Count; i++)
+            {
+                if (listIntegers[i] != listIntegers[i - 1])
+                {
+                    sortedCount++;
+                }
+            }
 
             // 3 different approaches' result
             text = "1. HashSet method: " + hashIntegers.Count.ToString() + " unique numbers.";
@@ -65,7 +74,8 @@ namespace HW2
 
             text += Environment.NewLine;
             text += "2. O(1) storage method: " + count + " unique numbers.";
-
+            text += Environment.NewLine;
+            text += "3. Sorted method: " + sortedCount + " unique numbers.";
 
 
             return text; //print result
