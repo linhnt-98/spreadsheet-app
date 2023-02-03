@@ -37,7 +37,25 @@ namespace HW2
                 hashIntegers.Add(listIntegers[j]);
             }
 
-
+            //O(1) storage
+            int count = 1;
+            bool IsDuplicate = false;
+            for (int i = 1; i < listIntegers.Count; i++)
+            {
+                IsDuplicate = false;
+                for (int j = 0; j < i; j++)
+                {
+                    if (listIntegers[i] == listIntegers[j])
+                    {
+                        IsDuplicate = true;
+                        break;
+                    }
+                }
+                if (!IsDuplicate)
+                {
+                    count++;
+                }
+            }
 
 
 
@@ -45,7 +63,8 @@ namespace HW2
             text = "1. HashSet method: " + hashIntegers.Count.ToString() + " unique numbers.";
             text += Environment.NewLine;
 
-
+            text += Environment.NewLine;
+            text += "2. O(1) storage method: " + count + " unique numbers.";
 
 
 
