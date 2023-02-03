@@ -10,6 +10,11 @@ using System.Windows.Forms;
 
 namespace HW2
 {
+    /// <summary>
+    /// This method will compare 3 different approaches that 
+    /// if they return the same result of finding unique integers 
+    /// in 10000 random numbers from 0 to 20000
+    /// </summary>
     public partial class Form1 : Form
     {
         public Form1()
