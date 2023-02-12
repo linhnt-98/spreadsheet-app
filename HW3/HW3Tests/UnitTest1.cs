@@ -1,6 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+using HW3;
+
 namespace HW3Tests
 {
-    using HW3;
+
 
     /// <summary>
     /// Test cases for HW3.
@@ -15,7 +25,7 @@ namespace HW3Tests
         [Test]
         public void FibNormalCaseTest()
         {
-            Assert.That((int)this.fibTextReader.CalcFib(10), Is.EqualTo(55));
+            Assert.That((int)this.fibTextReader.CalcFib(10), Is.EqualTo(34));
         }
 
         /// <summary>
@@ -24,7 +34,7 @@ namespace HW3Tests
         [Test]
         public void FibEdgeCaseTest()
         {
-            Assert.That((int)this.fibTextReader.CalcFib(1), Is.EqualTo(1));
+            Assert.That((int)this.fibTextReader.CalcFib(1), Is.EqualTo(0));
         }
 
         /// <summary>
@@ -33,7 +43,7 @@ namespace HW3Tests
         [Test]
         public void FibExceptionalCaseTest()
         {
-            Assert.That((int)this.fibTextReader.CalcFib(-10), Is.EqualTo(0));
+            Assert.That((int)this.fibTextReader.CalcFib(-10), Is.EqualTo(-1));
         }
 
         /// <summary>
@@ -42,7 +52,7 @@ namespace HW3Tests
         [Test]
         public void FibSpecialCase0Test()
         {
-            Assert.That((int)this.fibTextReader.CalcFib(0), Is.EqualTo(0));
+            Assert.That((int)this.fibTextReader.CalcFib(0), Is.EqualTo(-1));
         }
     }
 }
