@@ -37,5 +37,15 @@ namespace HW3
         {
 
         }
+
+        private void saveFromFileToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void contextMenuStrip2_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
     }
 }
