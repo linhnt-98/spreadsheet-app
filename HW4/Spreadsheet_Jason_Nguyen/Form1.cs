@@ -26,6 +26,7 @@ namespace Spreadsheet_Jason_Nguyen
         private void InitializeDataGrid()
         {
 
+            //Add Columns
             dataGridView1.Columns.Clear();
             dataGridView1.Rows.Clear();
 
@@ -35,6 +36,7 @@ namespace Spreadsheet_Jason_Nguyen
             }
 
             
+            //Add Rows
             for (int i = 1; i <= 50; i++)
             {
                 dataGridView1.Rows.Add(1) ;
