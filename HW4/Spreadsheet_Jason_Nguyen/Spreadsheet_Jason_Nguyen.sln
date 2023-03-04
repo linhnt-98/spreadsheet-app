@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spreadsheet_Jason_Nguyen", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetEngine", "..\SpreadsheetEngine\SpreadsheetEngine.csproj", "{3E187866-F40C-4A1A-81FA-9BB91165A73F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpreadsheetTest", "..\SpreadsheetTest\SpreadsheetTest.csproj", "{AC2CA573-8C06-40DA-A232-CD9283D582E7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E187866-F40C-4A1A-81FA-9BB91165A73F} = {3E187866-F40C-4A1A-81FA-9BB91165A73F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +26,10 @@ Global
 		{3E187866-F40C-4A1A-81FA-9BB91165A73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E187866-F40C-4A1A-81FA-9BB91165A73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E187866-F40C-4A1A-81FA-9BB91165A73F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC2CA573-8C06-40DA-A232-CD9283D582E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC2CA573-8C06-40DA-A232-CD9283D582E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC2CA573-8C06-40DA-A232-CD9283D582E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC2CA573-8C06-40DA-A232-CD9283D582E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
