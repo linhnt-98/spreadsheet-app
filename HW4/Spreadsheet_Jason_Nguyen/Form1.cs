@@ -26,10 +26,11 @@ namespace Spreadsheet_Jason_Nguyen
         private void InitializeDataGrid()
         {
 
-            //Add Columns
+            //Clear grid
             dataGridView1.Columns.Clear();
             dataGridView1.Rows.Clear();
 
+            //Add Columns
             for (char c = 'A'; c <= 'Z'; c++)
             {
                 dataGridView1.Columns.Add("col" + Char.ToString(c), Char.ToString(c)); 
