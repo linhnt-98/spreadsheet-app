@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HW5
+﻿namespace HW5
 {
     /// <summary>
     /// Varible string in node.
@@ -14,10 +8,6 @@ namespace HW5
         /// <summary>
         /// Gets or sets name of node.
         /// </summary>
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
     }
 }

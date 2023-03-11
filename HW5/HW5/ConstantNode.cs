@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HW5
+﻿namespace HW5
 {
     /// <summary>
     /// Node for constant values.
@@ -14,10 +8,6 @@ namespace HW5
         /// <summary>
         /// Gets or sets value of the node.
         /// </summary>
-        public double Value
-        {
-            get;
-            set;
-        }
+        public double Value { get; set; }
     }
 }

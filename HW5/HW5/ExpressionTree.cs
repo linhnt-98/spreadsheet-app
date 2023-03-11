@@ -1,19 +1,21 @@
-﻿namespace HW5
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW5
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// Expression tree class.
     /// </summary>
     public class ExpressionTree
     {
+
         // The root of tree.
         private Node root;
 
+
         private Dictionary<string, double> variables = new Dictionary<string, double>();
-        private char[] operators = { '+', '-', '*', '/' };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -40,7 +42,7 @@
         /// <param name="value">The value of the set variable.</param>
         public void SetVariable(string name, double value)
         {
-            variables[name] = value;
+            this.variables[name] = value;
         }
 
         /// <summary>
@@ -48,23 +50,35 @@
         /// </summary>
         /// <param name="s">String.</param>
         /// <returns>The node.</returns>
-        private Node Compile(string s)
+        private static Node Compile(string s)
         {
-            for (int i = 0; i < s.Length; i++)
+            if (string.IsNullOrEmpty(s))
             {
-                if (this.operators.Contains(s[i]))
+                return null;
+            }
+            char[] operators = { '+', '-', '*', '/' };
+            foreach (char op in operators)
+            {
+                Node n = Compile(s, op);
+                if (n != null)
                 {
-                    return Compile(s, i);
+                    return n;
                 }
             }
 
             if (double.TryParse(s, out double number))
             {
-                return new ConstantNode() { Value = number, };
+                return new ConstantNode()
+                {
+                    Value = number,
+                };
             }
             else
             {
-                return new VariableNode() { Name = s, };
+                return new VariableNode()
+                {
+                    Name = s,
+                };
             }
         }
 
@@ -74,12 +88,20 @@
         /// <param name="expression">Expression in form of string.</param>
         /// <param name="op">The last name to join.</param>
         /// <returns>The operator node.</returns>
-        private Node Compile(string expression, int i)
+        private static Node Compile(string expression, char op)
         {
-            OperatorNode operatorNode = new OperatorNode(expression[i]);
-            operatorNode.Left = Compile(expression.Substring(0, i));
-            operatorNode.Right = Compile(expression.Substring(i + 1));
-            return operatorNode;
+            for (int expressionIndex = expression.Length - 1; expressionIndex >= 0; expressionIndex--)
+            {
+                if (op == expression[expressionIndex])
+                {
+                    OperatorNode operatorNode = new OperatorNode(expression[expressionIndex]);
+                    operatorNode.Left = Compile(expression.Substring(0, expressionIndex));
+                    operatorNode.Right = Compile(expression.Substring(expressionIndex + 1));
+                    return operatorNode;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -89,13 +111,19 @@
         /// <returns>The evaluated value.</returns>
         private double Evaluate(Node node)
         {
-            if (node is ConstantNode constantNode)
+            ConstantNode constantNode = node as ConstantNode;
+            if (constantNode != null)
             {
                 return constantNode.Value;
             }
+            else if (node == null)
+            {
+                return double.NaN;
+            }
 
             // if its a variable.
-            if (node is VariableNode variableNode)
+            VariableNode variableNode = node as VariableNode;
+            if (variableNode != null)
             {
                 if (!this.variables.ContainsKey(variableNode.Name))
                 {
@@ -108,7 +136,8 @@
             }
 
             // or an operator.
-            if (node is OperatorNode operatorNode)
+            OperatorNode operatorNode = node as OperatorNode;
+            if (operatorNode != null)
             {
                 switch (operatorNode.Operator)
                 {
@@ -121,9 +150,7 @@
                     case '/':
                         return this.Evaluate(operatorNode.Left) / this.Evaluate(operatorNode.Right);
                     default: // Throw execption if nothing else
-                        throw new NotSupportedException(
-                            "Operator " + operatorNode.Operator.ToString() + " not supported."
-                        );
+                        throw new NotSupportedException("Operator " + operatorNode.Operator.ToString() + " not supported.");
                 }
             }
 

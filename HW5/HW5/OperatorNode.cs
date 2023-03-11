@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HW5
+﻿namespace HW5
 {
     /// <summary>
     /// Node for operators.
@@ -18,35 +12,23 @@ namespace HW5
         public OperatorNode(char c)
         {
             this.Operator = c;
-            this.Left = null;
-            this.Right = null;
+            this.Left = new Node();
+            this.Right = new Node();
         }
 
         /// <summary>
         /// Gets or sets the operator symbol.
         /// </summary>
-        public char Operator
-        {
-            get;
-            set;
-        }
+        public char Operator { get; set; }
 
         /// <summary>
         /// Gets or sets the left child node.
         /// </summary>
-        public Node Left
-        {
-            get;
-            set;
-        }
+        public Node Left { get; set; }
 
         /// <summary>
         /// Gets or sets the right child node.
         /// </summary>
-        public Node Right
-        {
-            get;
-            set;
-        }
+        public Node Right { get; set; }
     }
 }
