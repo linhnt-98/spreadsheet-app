@@ -43,6 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VariableNode.cs" />
+    <Compile Include="ConstantNode.cs" />
+    <Compile Include="OperatorNode.cs" />
+    <Compile Include="Node.cs" />
+    <Compile Include="ExpressionTree.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

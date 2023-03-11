@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 
 namespace HW5
 {
-    internal class Class1
+    /// <summary>
+    /// Varible string in node.
+    /// </summary>
+    internal class VariableNode : Node
     {
+        /// <summary>
+        /// Gets or sets name of node.
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
+        }
     }
 }

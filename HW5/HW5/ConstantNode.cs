@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 
 namespace HW5
 {
-    internal class Class1
+    /// <summary>
+    /// Node for constant values.
+    /// </summary>
+    internal class ConstantNode : Node
     {
+        /// <summary>
+        /// Gets or sets value of the node.
+        /// </summary>
+        public double Value
+        {
+            get;
+            set;
+        }
     }
 }
