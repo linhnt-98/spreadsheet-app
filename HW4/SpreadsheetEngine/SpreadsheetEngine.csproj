@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdditionNode.cs" />
+    <Compile Include="OperatorNodeFactory.cs" />
     <Compile Include="DivisionNode.cs" />
     <Compile Include="MultiplicationNode.cs" />
     <Compile Include="SubtractionNode.cs" />
