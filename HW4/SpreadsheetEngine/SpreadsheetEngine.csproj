@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdditionNode.cs" />
     <Compile Include="ConstantNode.cs" />
     <Compile Include="ExpressionTree.cs" />
     <Compile Include="Node.cs" />
