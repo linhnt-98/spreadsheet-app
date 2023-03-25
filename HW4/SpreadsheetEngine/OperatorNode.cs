@@ -1,34 +1,58 @@
-﻿namespace HW5
+﻿namespace SpreadsheetEngine
 {
     /// <summary>
     /// Node for operators.
     /// </summary>
-    internal class OperatorNode : Node
+    public abstract class OperatorNode : Node
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OperatorNode"/> class.
         /// </summary>
-        /// <param name="c">Some char.</param>
-        public OperatorNode(char c)
+        public OperatorNode()
         {
-            this.Operator = c;
-            this.Left = new Node();
-            this.Right = new Node();
+        }
+
+        /// <summary>
+        /// sets associtivity of right or left.
+        /// </summary>
+        public enum AssocEnum
+        {
+            /// <summary>
+            /// sets associtivity of right.
+            /// </summary>
+            Right,
+
+            /// <summary>
+            /// sets associtivity of left.
+            /// </summary>
+            Left,
         }
 
         /// <summary>
         /// Gets or sets the operator symbol.
         /// </summary>
-        public char Operator { get; set; }
+        public char Operator
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets or sets the left child node.
         /// </summary>
-        public Node Left { get; set; }
+        public Node Left
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets or sets the right child node.
         /// </summary>
-        public Node Right { get; set; }
+        public Node Right
+        {
+            get;
+            set;
+        }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HW5
+namespace SpreadsheetEngine
 {
 
     /// <summary>
@@ -10,11 +10,17 @@ namespace HW5
     /// </summary>
     public class ExpressionTree
     {
+        /// <summary>
+        /// Creates a new instance of OperatorNodeFactory.
+        /// </summary>
+        private readonly OperatorNodeFactory factory = new OperatorNodeFactory();
 
         // The root of tree.
         private Node root;
 
-
+        /// <summary>
+        /// A dictionary for the ExpressionTree.
+        /// </summary>
         private Dictionary<string, double> variables = new Dictionary<string, double>();
 
         /// <summary>
@@ -23,7 +29,7 @@ namespace HW5
         /// <param name="expression">String input.</param>
         public ExpressionTree(string expression)
         {
-            this.root = Compile(expression);
+            this.root = this.Compile(expression);
         }
 
         /// <summary>
@@ -32,7 +38,7 @@ namespace HW5
         /// <returns>Evaluated double.</returns>
         public double Evaluate()
         {
-            return this.Evaluate(this.root);
+            return this.root.Evaluate();
         }
 
         /// <summary>
@@ -42,119 +48,211 @@ namespace HW5
         /// <param name="value">The value of the set variable.</param>
         public void SetVariable(string name, double value)
         {
-            this.variables[name] = value;
-        }
-
-        /// <summary>
-        /// Compiles the node.
-        /// </summary>
-        /// <param name="s">String.</param>
-        /// <returns>The node.</returns>
-        private static Node Compile(string s)
-        {
-            if (string.IsNullOrEmpty(s))
+            if (this.variables.ContainsKey(name))
             {
-                return null;
-            }
-            char[] operators = { '+', '-', '*', '/' };
-            foreach (char op in operators)
-            {
-                Node n = Compile(s, op);
-                if (n != null)
-                {
-                    return n;
-                }
-            }
-
-            if (double.TryParse(s, out double number))
-            {
-                return new ConstantNode()
-                {
-                    Value = number,
-                };
+                this.variables[name] = value;
             }
             else
             {
-                return new VariableNode()
-                {
-                    Name = s,
-                };
+                this.variables.Add(name, value);
             }
         }
 
         /// <summary>
-        /// Splits expression into trees.
+        /// Does the Shunting Yard Algorithmn on an expression.
+        /// See http://math.oxford.emory.edu/site/cs171/shuntingYardAlgorithm/ .
         /// </summary>
-        /// <param name="expression">Expression in form of string.</param>
-        /// <param name="op">The last name to join.</param>
-        /// <returns>The operator node.</returns>
-        private static Node Compile(string expression, char op)
+        /// <param name="expression">a string containing our expression.</param>
+        /// <returns>Postfix expression (List of strings).</returns>
+        private List<string> ShuntingYard(string expression)
         {
-            for (int expressionIndex = expression.Length - 1; expressionIndex >= 0; expressionIndex--)
+            List<string> postFixExpression = new List<string>();
+            Stack<char> operators = new Stack<char>();
+            int operandStart = -1;
+            for (int i = 0; i < expression.Length; i++)
             {
-                if (op == expression[expressionIndex])
+                char c = expression[i];
+                if (this.IsOperatorOrParenthesis(c))
                 {
-                    OperatorNode operatorNode = new OperatorNode(expression[expressionIndex]);
-                    operatorNode.Left = Compile(expression.Substring(0, expressionIndex));
-                    operatorNode.Right = Compile(expression.Substring(expressionIndex + 1));
-                    return operatorNode;
+                    if (operandStart != -1)
+                    {
+                        string operand = expression.Substring(operandStart, i - operandStart);
+                        postFixExpression.Add(operand);
+                        operandStart = -1;
+                    }
+
+                    if (this.IsLeftParenthesis(c))
+                    {
+                        operators.Push(c);
+                    }
+                    else if (this.IsRightParenthesis(c))
+                    {
+                        char op = operators.Pop();
+                        while (!this.IsLeftParenthesis(op))
+                        {
+                            postFixExpression.Add(op.ToString());
+                            op = operators.Pop();
+                        }
+                    }
+                    else if (this.factory.IsAOperator(c))
+                    {
+                        if (operators.Count == 0 || this.IsLeftParenthesis(operators.Peek()))
+                        {
+                            operators.Push(c);
+                        }
+                        else if (this.IsLowerPrecedence(c, operators.Peek()) || (this.IsSamePrecedence(c, operators.Peek()) && this.IsRightAssociative(c)))
+                        {
+                            operators.Push(c);
+                        }
+                        else if (this.IsHigherPrecedence(c, operators.Peek()) || (this.IsSamePrecedence(c, operators.Peek()) && this.IsLeftAssociative(c)))
+                        {
+                            do
+                            {
+                                char op = operators.Pop();
+                                postFixExpression.Add(op.ToString());
+                            }
+                            while (operators.Count > 0 && (this.IsLowerPrecedence(c, operators.Peek()) || (this.IsSamePrecedence(c, operators.Peek()) && this.IsLeftAssociative(c))));
+
+                            operators.Push(c);
+                        }
+                    }
+                }
+                else if (operandStart == -1)
+                {
+                    operandStart = i;
                 }
             }
 
-            return null;
+            if (operandStart != -1)
+            {
+                postFixExpression.Add(expression.Substring(operandStart, expression.Length - operandStart));
+            }
+
+            while (operators.Count > 0)
+            {
+                postFixExpression.Add(operators.Pop().ToString());
+            }
+
+            return postFixExpression;
         }
 
         /// <summary>
-        /// Determines what type of node it is.
+        /// Compiles our expression tree using our shuntingYard alogirthmn.
+        /// See https://en.wikipedia.org/wiki/Binary_expression_tree .
         /// </summary>
-        /// <param name="node">A node.</param>
-        /// <returns>The evaluated value.</returns>
-        private double Evaluate(Node node)
+        /// <param name="expression">A string containing our expression.</param>
+        /// <returns>return expression tree.</returns>
+        private Node Compile(string expression)
         {
-            ConstantNode constantNode = node as ConstantNode;
-            if (constantNode != null)
-            {
-                return constantNode.Value;
-            }
-            else if (node == null)
-            {
-                return double.NaN;
-            }
+            Stack<Node> nodes = new Stack<Node>();
+            var postfixExpression = this.ShuntingYard(expression);
 
-            // if its a variable.
-            VariableNode variableNode = node as VariableNode;
-            if (variableNode != null)
+            foreach (var token in postfixExpression)
             {
-                if (!this.variables.ContainsKey(variableNode.Name))
+                if (token.Length == 1 && this.IsOperatorOrParenthesis(token[0]))
                 {
-                    // if the local dictionary doesnt have a key value pair
-                    // returns not a number.
-                    return double.NaN;
+                    OperatorNode node = this.factory.CreateOperatorNode(token[0]);
+                    node.Right = nodes.Pop();
+                    node.Left = nodes.Pop();
+                    nodes.Push(node);
                 }
-
-                return this.variables[variableNode.Name];
-            }
-
-            // or an operator.
-            OperatorNode operatorNode = node as OperatorNode;
-            if (operatorNode != null)
-            {
-                switch (operatorNode.Operator)
+                else
                 {
-                    case '+':
-                        return this.Evaluate(operatorNode.Left) + this.Evaluate(operatorNode.Right);
-                    case '-':
-                        return this.Evaluate(operatorNode.Left) - this.Evaluate(operatorNode.Right);
-                    case '*':
-                        return this.Evaluate(operatorNode.Left) * this.Evaluate(operatorNode.Right);
-                    case '/':
-                        return this.Evaluate(operatorNode.Left) / this.Evaluate(operatorNode.Right);
-                    default: // Throw execption if nothing else
-                        throw new NotSupportedException("Operator " + operatorNode.Operator.ToString() + " not supported.");
+                    if (double.TryParse(token, out double num))
+                    {
+                        nodes.Push(new ConstantNode(num));
+                    }
+                    else
+                    {
+                        nodes.Push(new VariableNode(token, ref this.variables));
+                    }
                 }
             }
 
-            throw new NotSupportedException();
+            return nodes.Pop();
+        }
+
+        /// <summary>
+        /// check if char is operator or parenthesis.
+        /// </summary>
+        /// <param name="ch">takes in char.</param>
+        /// <returns>true or false.</returns>
+        private bool IsOperatorOrParenthesis(char ch)
+        {
+            return this.factory.IsAOperator(ch) || ch == '(' || ch == ')';
+        }
+
+        /// <summary>
+        /// check if ch is '('.
+        /// </summary>
+        /// <param name="ch">char.</param>
+        /// <returns>bool.</returns>
+        private bool IsLeftParenthesis(char ch)
+        {
+            return ch == '(';
+        }
+
+        /// <summary>
+        /// check if ch ')'.
+        /// </summary>
+        /// <param name="ch">char.</param>
+        /// <returns>bool.</returns>
+        private bool IsRightParenthesis(char ch)
+        {
+            return ch == ')';
+        }
+
+        /// <summary>
+        /// check if operator1 has higher precedence then operator2.
+        /// </summary>
+        /// <param name="operator1">operator1.</param>
+        /// <param name="operator2">operatorr2.</param>
+        /// <returns>bool.</returns>
+        private bool IsHigherPrecedence(char operator1, char operator2)
+        {
+            return this.factory.Precedence(operator1) > this.factory.Precedence(operator2);
+        }
+
+        /// <summary>
+        /// check if operator1 has lower precedence then operator2.
+        /// </summary>
+        /// <param name="operator1">operator1.</param>
+        /// <param name="operator2">operator2.</param>
+        /// <returns>bool.</returns>
+        private bool IsLowerPrecedence(char operator1, char operator2)
+        {
+            return this.factory.Precedence(operator1) < this.factory.Precedence(operator2);
+        }
+
+        /// <summary>
+        /// check for same precedence.
+        /// </summary>
+        /// <param name="operator1">operator1.</param>
+        /// <param name="operator2">operator2.</param>
+        /// <returns>bool.</returns>
+        private bool IsSamePrecedence(char operator1, char operator2)
+        {
+            return this.factory.Precedence(operator1) == this.factory.Precedence(operator2);
+        }
+
+        /// <summary>
+        /// checks right associativity.
+        /// </summary>
+        /// <param name="operator1">operator.</param>
+        /// <returns>bool.</returns>
+        private bool IsRightAssociative(char operator1)
+        {
+            return this.factory.Associativity(operator1) == OperatorNode.AssocEnum.Right;
+        }
+
+        /// <summary>
+        /// checks left associtivity.
+        /// </summary>
+        /// <param name="operator1">operator.</param>
+        /// <returns>bool.</returns>
+        private bool IsLeftAssociative(char operator1)
+        {
+            return this.factory.Associativity(operator1) == OperatorNode.AssocEnum.Left;
         }
     }
 }
