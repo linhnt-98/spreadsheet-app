@@ -29,15 +29,6 @@
         }
 
         /// <summary>
-        /// Gets or sets the operator symbol.
-        /// </summary>
-        public char Operator
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets the left child node.
         /// </summary>
         public Node Left

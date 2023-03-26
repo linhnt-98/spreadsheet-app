@@ -101,7 +101,7 @@ namespace SpreadsheetTest
             Assert.That(multiplicationOrderTest.Evaluate(), Is.EqualTo(39));
 
             ExpressionTree divisionOrderTest = new ExpressionTree("8+9/3+7");
-            Assert.That(multiplicationOrderTest.Evaluate(), Is.EqualTo(18));
+            Assert.That(divisionOrderTest.Evaluate(), Is.EqualTo(18));
         }
     }
 }

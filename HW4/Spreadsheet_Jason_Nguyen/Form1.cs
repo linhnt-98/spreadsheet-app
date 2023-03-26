@@ -40,16 +40,17 @@ namespace Spreadsheet_Jason_Nguyen
             //Add Columns
             for (char c = 'A'; c <= 'Z'; c++)
             {
-                dataGridView1.Columns.Add("col" + Char.ToString(c), Char.ToString(c)); 
+                dataGridView1.Columns.Add("col" + Char.ToString(c), Char.ToString(c));
             }
 
-            
+
             //Add Rows
             for (int i = 1; i <= 50; i++)
             {
-                dataGridView1.Rows.Add(1) ;
+                dataGridView1.Rows.Add(1);
                 dataGridView1.Rows[i - 1].HeaderCell.Value = i.ToString();
             }
+            dataGridView1.CellEndEdit += OnCurrentCellChanged;
 
         }
 
@@ -63,6 +64,18 @@ namespace Spreadsheet_Jason_Nguyen
             if (e.PropertyName == "Value" && sender is Cell cell)
             {
                 this.dataGridView1.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Value = cell.Value;
+
+            }
+
+        }
+        private void OnCurrentCellChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            var value = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+            if (!string.IsNullOrEmpty(value.ToString()))
+            {
+                ExpressionTree testExpressionTree = new ExpressionTree(value.ToString());
+                var x = testExpressionTree.Evaluate();
+                this.spreadSheet.SetCellText(e.RowIndex, e.ColumnIndex, testExpressionTree.Evaluate().ToString());
             }
         }
 
@@ -71,8 +84,6 @@ namespace Spreadsheet_Jason_Nguyen
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
-
         private void button1_Click_1(object sender, EventArgs e)
         {
             Random rand = new Random();

@@ -23,7 +23,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// Gets subtraction operator.
         /// </summary>
-        public static new char Operator => '-';
+        public static char Operator => '-';
 
         /// <summary>
         /// Gets precedance.

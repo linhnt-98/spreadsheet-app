@@ -46,10 +46,14 @@ namespace SpreadsheetEngine
             double value = 0;
             if (this.varDictionary.ContainsKey(this.varValue))
             {
-                value = this.varDictionary[this.varValue];
-            }
+                {
+                    value = this.varDictionary[this.varValue];
+                }
 
-            return value;
+                return value;
+            }
+            else
+                return double.NaN;
         }
     }
 }

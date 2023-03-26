@@ -24,7 +24,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// Gets division operator.
         /// </summary>
-        public static new char Operator => '/';
+        public static char Operator => '/';
 
         /// <summary>
         /// Gets precedence.
