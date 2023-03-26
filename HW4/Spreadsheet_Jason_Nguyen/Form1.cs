@@ -73,9 +73,23 @@ namespace Spreadsheet_Jason_Nguyen
             var value = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
             if (!string.IsNullOrEmpty(value.ToString()))
             {
-                ExpressionTree testExpressionTree = new ExpressionTree(value.ToString());
-                var x = testExpressionTree.Evaluate();
-                this.spreadSheet.SetCellText(e.RowIndex, e.ColumnIndex, testExpressionTree.Evaluate().ToString());
+                var res = value.ToString();
+                if (res[0] == '=')
+                {
+                    if (res[1] < 'A' || res[1] > 'Z')
+                    {
+                        var tmp = res;
+                        if (res[1] != 'm')
+                        {
+                            tmp = res.TrimStart('=');
+                        }
+                        ExpressionTree testExpressionTree = new ExpressionTree(tmp);
+                        res = testExpressionTree.Evaluate().ToString();
+                    }
+                }
+
+                this.spreadSheet.SetCellText(e.RowIndex, e.ColumnIndex, res);
+
             }
         }
 
