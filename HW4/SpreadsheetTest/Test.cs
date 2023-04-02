@@ -101,7 +101,66 @@ namespace SpreadsheetTest
             Assert.That(multiplicationOrderTest.Evaluate(), Is.EqualTo(39));
 
             ExpressionTree divisionOrderTest = new ExpressionTree("8+9/3+7");
-            Assert.That(divisionOrderTest.Evaluate(), Is.EqualTo(18));
+            Assert.That(multiplicationOrderTest.Evaluate(), Is.EqualTo(18));
+        }
+
+        /// <summary>
+        /// Tests if two cells has the same value.
+        /// </summary>
+        [Test]
+        public void TestCellsSameValue()
+        {
+            this.spreadSheetTest.SetCellText(1, 1, "8");
+            this.spreadSheetTest.SetCellText(1, 2, "=A1");
+            Assert.That(this.spreadSheetTest.GetCell(1, 1).Text, Is.EqualTo(this.spreadSheetTest.GetCell(1, 2).Value));
+        }
+
+        /// <summary>
+        /// Tests if addition works in an expression.
+        /// </summary>
+        [Test]
+        public void TestCellsAddition()
+        {
+            this.spreadSheetTest.SetCellText(1, 1, "8");
+            this.spreadSheetTest.SetCellText(1, 2, "2");
+            this.spreadSheetTest.SetCellText(2, 1, "=A1+B1");
+            Assert.That(this.spreadSheetTest.GetCell(2, 1).Text, Is.EqualTo("10"));
+        }
+
+        /// <summary>
+        /// Tests if subtraction works in an expression.
+        /// </summary>
+        [Test]
+        public void TestCellsSubtraction()
+        {
+            this.spreadSheetTest.SetCellText(1, 1, "8");
+            this.spreadSheetTest.SetCellText(1, 2, "2");
+            this.spreadSheetTest.SetCellText(2, 1, "=A1-B1");
+            Assert.That(this.spreadSheetTest.GetCell(2, 1).Text, Is.EqualTo("6"));
+        }
+
+        /// <summary>
+        /// Tests if multiplication works in an expression.
+        /// </summary>
+        [Test]
+        public void TestCellsMultiplication()
+        {
+            this.spreadSheetTest.SetCellText(1, 1, "8");
+            this.spreadSheetTest.SetCellText(1, 2, "2");
+            this.spreadSheetTest.SetCellText(2, 1, "=A1*B1");
+            Assert.That(this.spreadSheetTest.GetCell(2, 1).Text, Is.EqualTo("16"));
+        }
+
+        /// <summary>
+        /// Tests if division works in an expression.
+        /// </summary>
+        [Test]
+        public void TestCellsDivision()
+        {
+            this.spreadSheetTest.SetCellText(1, 1, "8");
+            this.spreadSheetTest.SetCellText(1, 2, "2");
+            this.spreadSheetTest.SetCellText(2, 1, "=A1/B1");
+            Assert.That(this.spreadSheetTest.GetCell(2, 1).Text, Is.EqualTo("4"));
         }
     }
 }
