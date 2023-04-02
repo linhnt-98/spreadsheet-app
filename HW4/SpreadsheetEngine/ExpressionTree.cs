@@ -29,6 +29,7 @@ namespace SpreadsheetEngine
         /// <param name="expression">String input.</param>
         public ExpressionTree(string expression)
         {
+            this.variables = new Dictionary<string, double>();
             this.root = this.Compile(expression);
         }
 
@@ -42,20 +43,22 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// Joins a first name and a last name together into a single string.
+        /// adds a given variable string with a user given double value.
         /// </summary>
-        /// <param name="name">The name of the set variable.</param>
-        /// <param name="value">The value of the set variable.</param>
+        /// <param name="name">Name of the set variable.</param>
+        /// <param name="value">Value of the set variable.</param>
         public void SetVariable(string name, double value)
         {
-            if (this.variables.ContainsKey(name))
-            {
-                this.variables[name] = value;
-            }
-            else
-            {
-                this.variables.Add(name, value);
-            }
+            this.variables[name] = value;
+        }
+
+        /// <summary>
+        /// Gets the keys from variable dictionary.
+        /// </summary>
+        /// <returns>array of keys.</returns>
+        public string[] GetKeys()
+        {
+            return this.variables.Keys.ToArray();
         }
 
         /// <summary>
