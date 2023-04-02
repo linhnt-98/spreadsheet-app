@@ -23,7 +23,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// Gets mulitplication operator.
         /// </summary>
-        public static char Operator => '*';
+        public static new char Operator => '*';
 
         /// <summary>
         /// Gets precedence.

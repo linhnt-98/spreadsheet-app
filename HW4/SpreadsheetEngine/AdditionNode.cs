@@ -22,7 +22,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// Gets addition operator.
         /// </summary>
-        public static char Operator => '+';
+        public static new char Operator => '+';
 
         /// <summary>
         /// Gets precedence.

@@ -10,7 +10,7 @@ namespace SpreadsheetEngine
     /// <summary>
     /// OperatorNodeFactory class.
     /// </summary>
-    internal class OperatorNodeFactory
+    public class OperatorNodeFactory
     {
         /// <summary>
         /// A dictionary to key char values to their types.

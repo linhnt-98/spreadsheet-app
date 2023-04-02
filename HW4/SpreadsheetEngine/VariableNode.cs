@@ -26,15 +26,7 @@ namespace SpreadsheetEngine
         {
             this.varValue = newVarValue;
             this.varDictionary = pairs;
-        }
-
-        /// <summary>
-        /// Gets or sets name of node.
-        /// </summary>
-        public string Name
-        {
-            get;
-            set;
+            this.varDictionary[this.varValue] = 0;
         }
 
         /// <summary>
@@ -43,16 +35,14 @@ namespace SpreadsheetEngine
         /// <returns>Double.</returns>
         public override double Evaluate()
         {
-            double value = 0;
-            if (this.varDictionary.ContainsKey(this.varValue))
-            
-                {
-                    value = this.varDictionary[this.varValue];
-                }
+            // Return double.nan if variablevalue(name) does not exist in dictionary.
+            if (!this.varDictionary.ContainsKey(this.varValue))
+            {
+                return double.NaN;
+            }
 
-                return value;
-            
-
+            // else return the value.
+            return this.varDictionary[this.varValue];
         }
     }
 }
