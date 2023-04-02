@@ -104,9 +104,11 @@ namespace Spreadsheet_Jason_Nguyen
         {
             Cell editingCell = this.spreadSheet.GetCell(e.RowIndex, e.ColumnIndex);
 
-            if (this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() != null)
+            var cell = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+            if (cell.Value != null)
             {
-                editingCell.Text = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                editingCell.Text = cell.Value.ToString();
             }
             else
             {
