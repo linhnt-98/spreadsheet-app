@@ -11,113 +11,110 @@ using SpreadsheetEngine;
 
 namespace Spreadsheet_Jason_Nguyen
 {
+    /// <summary>
+    /// Main Form.
+    /// </summary>
     public partial class Form1 : Form
     {
 
+        /// <summary>
+        /// Initialize a spreedsheet instance of size 50*26.
+        /// </summary>
         private Spreadsheet spreadSheet = new Spreadsheet(50, 26);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Form1"/> class.
+        /// </summary>
         public Form1()
         {
-            InitializeComponent();
-            InitializeDataGrid();
+            this.InitializeComponent();
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        /// <summary>
+        /// Does nothing.
+        /// </summary>
+        private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
         }
 
-        private void InitializeDataGrid()
+        /// <summary>
+        /// Initialize data grid.
+        /// </summary>
+        private void InitializeDataGrid(object sender, EventArgs e)
         {
 
-            //Clear grid
-            dataGridView1.Columns.Clear();
-            dataGridView1.Rows.Clear();
+            // Clear grid.
+            this.dataGridView1.Rows.Clear();
+            this.dataGridView1.Columns.Clear();
 
             this.spreadSheet.CellPropertyChanged += this.CellPropertyChanged;
 
-
-            //Add Columns
-            for (char c = 'A'; c <= 'Z'; c++)
+            // Creating the columns of letters.
+            string[] alphabetList =
             {
-                dataGridView1.Columns.Add("col" + Char.ToString(c), Char.ToString(c));
+                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+            };
+
+            this.dataGridView1.RowHeadersWidth = 50;
+            this.dataGridView1.ColumnCount = 26;
+            this.dataGridView1.RowCount = 50;
+
+            for (int i = 0; i < 26; i++)
+            {
+                this.dataGridView1.Columns[i].Name = alphabetList[i];
             }
 
-
-            //Add Rows
-            for (int i = 1; i <= 50; i++)
+            for (int i = 1; i < 51; i++)
             {
-                dataGridView1.Rows.Add(1);
-                dataGridView1.Rows[i - 1].HeaderCell.Value = i.ToString();
+                this.dataGridView1.Rows[i - 1].HeaderCell.Value = i.ToString();
             }
-            dataGridView1.CellEndEdit += OnCurrentCellChanged;
-
         }
 
         /// <summary>
         /// Updates the cell value when the propertly is changed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">control for loading the form.</param>
+        /// <param name="e">event data.</param>
         private void CellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Value" && sender is Cell cell)
             {
                 this.dataGridView1.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Value = cell.Value;
-
-            }
-
-        }
-        private void OnCurrentCellChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            var value = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-            if (!string.IsNullOrEmpty(value.ToString()))
-            {
-                var res = value.ToString();
-                if (res[0] == '=')
-                {
-                    if (res[1] < 'A' || res[1] > 'Z')
-                    {
-                        var tmp = res;
-                        if (res[1] != 'm')
-                        {
-                            tmp = res.TrimStart('=');
-                        }
-                        ExpressionTree testExpressionTree = new ExpressionTree(tmp);
-                        res = testExpressionTree.Evaluate().ToString();
-                    }
-                }
-
-                this.spreadSheet.SetCellText(e.RowIndex, e.ColumnIndex, res);
-
             }
         }
 
         /// <summary>
-        /// Creates a Demo of the cell engine, when button is clicked.
+        /// When editing cell, show text first instead of the value.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button1_Click_1(object sender, EventArgs e)
+        /// <param name="sender">For loading form.</param>
+        /// <param name="e">The event data.</param>
+        private void DataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            Random rand = new Random();
-            for (int i = 0; i < 50; i++)
-            {
-                int rowIndex = rand.Next(0, 49);
-                int columnIndex = rand.Next(2, 25);
+            Cell editingCell = this.spreadSheet.GetCell(e.RowIndex, e.ColumnIndex);
 
-                this.spreadSheet.SetCellText(rowIndex, columnIndex, "Hello World");
-            }
-
-            for (int i = 0; i < 50; i++)
-            {
-                this.spreadSheet.SetCellText(i, 1, "this is cell B" + (i + 1).ToString());
-            }
-
-            for (int i = 0; i < 50; i++)
-            {
-                this.spreadSheet.SetCellText(i, 0, "=B" + (i + 1).ToString());
-            }
+            this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = editingCell.Text;
         }
+
+        /// <summary>
+        /// When done editing cell, show the value instead of text.
+        /// </summary>
+        /// <param name="sender">For loading form.</param>
+        /// <param name="e">The event data.</param>
+        private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            Cell editingCell = this.spreadSheet.GetCell(e.RowIndex, e.ColumnIndex);
+
+            if (this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() != null)
+            {
+                editingCell.Text = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+            }
+            else
+            {
+                editingCell.Text = string.Empty;
+            }
+
+            this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = editingCell.Value;
+        }
+
     }
 }
