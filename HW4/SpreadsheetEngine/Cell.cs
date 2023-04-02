@@ -20,12 +20,17 @@ namespace SpreadsheetEngine
         /// <summary>
         /// To use part of text Property.
         /// </summary>
-        private string text = string.Empty;
+        private protected string text = string.Empty;
 
         /// <summary>
         /// To use part of value property.
         /// </summary>
         private protected string value = string.Empty;
+
+        /// <summary>
+        /// string value of cell.
+        /// </summary>
+        private protected string cellTag;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Cell"/> class.
@@ -36,6 +41,8 @@ namespace SpreadsheetEngine
         {
             this.rowIndex = rowIndex;
             this.columnIndex = columnIndex;
+            this.cellTag += Convert.ToChar('A' + columnIndex);
+            this.cellTag += (rowIndex + 1).ToString();
         }
 
         /// <summary>
@@ -87,11 +94,20 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// Gets text.
+        /// Gets value.
         /// </summary>
         public string Value
         {
             get { return this.value; }
         }
+
+        /// <summary>
+        /// Gets the cell's tag.
+        /// </summary>
+        public string CellTag
+        {
+            get { return this.cellTag; }
+        }
+
     }
 }
