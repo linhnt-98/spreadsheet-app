@@ -28,7 +28,7 @@ namespace SpreadsheetEngine
         {
             get
             {
-                return this.undoStack.Count > 0;
+                return this.undoStack.Any();
             }
         }
 
@@ -39,7 +39,7 @@ namespace SpreadsheetEngine
         {
             get
             {
-                return this.redoStack.Count > 0;
+                return this.redoStack.Any();
             }
         }
 

@@ -237,7 +237,7 @@ namespace SpreadsheetTest
             string directory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
             string path = directory + @"\Saves\spreadSheet.xml";
             Assert.That(File.Exists(path), Is.EqualTo(true));
-        }
+    }
 
         /// <summary>
         /// Tests loading multiple cells from XML.
@@ -296,5 +296,4 @@ namespace SpreadsheetTest
 
     }
 
-}
 }
