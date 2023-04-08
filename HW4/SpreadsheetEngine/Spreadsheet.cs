@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace SpreadsheetEngine
 {
@@ -80,6 +82,51 @@ namespace SpreadsheetEngine
 
                 this.Eval(sender as Cell);
             }
+
+            if (e.PropertyName == "BGColor")
+            {
+                this.CellPropertyChanged(sender, new PropertyChangedEventArgs("BGColor"));
+            }
+        }
+
+        /// <summary>
+        /// Saves all modified cells into an XML file.
+        /// </summary>
+        /// <param name="outFile">output filestream.</param>
+        public void Save(Stream outFile)
+        {
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+
+            XmlWriter writeXml = XmlWriter.Create(outFile, settings);
+
+            writeXml.WriteStartElement("spreadsheet"); // <spreadsheet>
+
+            foreach (Cell currentCell in this.spreadsheetArray)
+            {
+                // When saving, only write data from cells that have one or more non-default properties. This
+                // means that if a cell hasn’t been changed in any way then you don’t need to write data for it to
+                // the file.
+                if (currentCell.Text != string.Empty || currentCell.Value != string.Empty || currentCell.BGColor != 4294967295)
+                {
+                    writeXml.WriteStartElement("cell");
+                    writeXml.WriteAttributeString("celltag", currentCell.CellTag);
+                    writeXml.WriteElementString("bgcolor", currentCell.BGColor.ToString("x8"));
+                    writeXml.WriteElementString("text", currentCell.Text.ToString());
+                    writeXml.WriteEndElement();
+
+                    // Spreadsheet is saved/loaded into XML as shown.
+                    /*
+                    <cell celltag="A1">
+                        <bgcolor> ffffffff </bgcolor>
+                        <text> 22 </text >
+                    </cell>
+                    */
+                }
+            }
+
+            writeXml.WriteEndElement(); // </spreadsheet>
+            writeXml.Close();
         }
 
         /// <summary>

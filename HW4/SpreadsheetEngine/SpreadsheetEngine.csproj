@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UndoRedoText.cs" />
     <Compile Include="UndoRedoColor.cs" />
     <Compile Include="UndoRedoClass.cs" />
     <Compile Include="IUndoRedoCommand.cs" />

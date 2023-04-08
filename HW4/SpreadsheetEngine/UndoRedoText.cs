@@ -8,14 +8,14 @@ namespace SpreadsheetEngine
 {
     /// <summary>
     /// Class that inherits from our DoUndoRedoCommand interface, used for storing
-    /// the old cellColor values.
+    /// the old cellText values.
     /// </summary>
-    public class UndoRedoColor : IUndoRedoCommand
+    public class UndoRedoText : IUndoRedoCommand
     {
         /// <summary>
-        /// int cellColor, which contains the color of the cell.
+        /// string cellText, which contains the text of the cell.
         /// </summary>
-        private int cellColor;
+        private string cellText;
 
         /// <summary>
         /// string cellName, which contains the "name" or "tag" of the cell.
@@ -23,19 +23,19 @@ namespace SpreadsheetEngine
         private string cellName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UndoRedoColor"/> class.
-        /// Constructor for the UndoRedoColor class, which takes  and stores the inputted name and color of the cell.
+        /// Initializes a new instance of the <see cref="UndoRedoText"/> class.
+        /// Constructor for the UndoRedoText class, which takes  and stores the inputted name and color of the cell.
         /// </summary>
-        /// <param name="oldCellColor">(int)color.</param>
+        /// <param name="oldCellText">(string)Text.</param>
         /// <param name="oldCellName">Name of cell.</param>
-        public UndoRedoColor(int oldCellColor, string oldCellName)
+        public UndoRedoText(string oldCellText, string oldCellName)
         {
-            this.cellColor = oldCellColor;
+            this.cellText = oldCellText;
             this.cellName = oldCellName;
         }
 
         /// <summary>
-        /// inherited abstract interface method, saves and returns the oldColor of a cell.
+        /// inherited abstract interface method, saves and returns the old text of a cell.
         /// </summary>
         /// <param name="spreadSheet">spreadSheet Instance.</param>
         /// <returns>(UndoRedoColor)the old cell color.</returns>
@@ -43,13 +43,13 @@ namespace SpreadsheetEngine
         {
             Cell cell = spreadSheet.GetCell(this.cellName);
 
-            int old = (int)cell.BGColor;
+            string old = cell.Text;
 
-            cell.BGColor = (uint)this.cellColor;
+            cell.Text = this.cellText;
 
-            UndoRedoColor oldColor = new UndoRedoColor(old, this.cellName);
+            UndoRedoText oldTextClass = new UndoRedoText(old, this.cellName);
 
-            return oldColor;
+            return oldTextClass;
         }
     }
 }

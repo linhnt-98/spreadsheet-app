@@ -1,4 +1,6 @@
 using SpreadsheetEngine;
+using static SpreadsheetEngine.Spreadsheet;
+using System.Xml;
 
 namespace SpreadsheetTest
 {
@@ -162,5 +164,137 @@ namespace SpreadsheetTest
             this.spreadSheetTest.SetCellText(2, 1, "=A1/B1");
             Assert.That(this.spreadSheetTest.GetCell(2, 1).Text, Is.EqualTo("4"));
         }
+
+        /// <summary>
+        /// Testing colors.
+        /// </summary>
+        [Test]
+        public void TestColorChange()
+        {
+            this.spreadSheetTest.setColor(1, 1, "Blue");
+            Assert.That(this.spreadSheetTest.getColor(1, 1), Is.EqualTo("Blue"));
+
+            this.spreadSheetTest.setColor(1, 1, "Red");
+            Assert.That(this.spreadSheetTest.getColor(1, 1), Is.EqualTo("Red"));
+
+            this.spreadSheetTest.setColor(1, 1, "Orange");
+            Assert.That(this.spreadSheetTest.getColor(1, 1), Is.EqualTo("Orange"));
+
+            this.spreadSheetTest.setColor(1, 1, "Yellow");
+            Assert.That(this.spreadSheetTest.getColor(1, 1), Is.EqualTo("Yello"));
+        }
+
+        /// <summary>
+        /// Tests saving cell to XML format.
+        /// </summary>
+        [Test]
+        public void TestSaveCellToXML()
+        {
+            Spreadsheet spreadsheet = new Spreadsheet(5, 5);
+            spreadsheet.CellPropertyChanged += (sender, e) => { };
+            CreateCell testCell = new CreateCell(1, 1, string.Empty, 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            spreadsheet.CreateXML();
+            string workingDirectory = Environment.CurrentDirectory;
+            string directory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+            string path = directory + @"\Saves\spreadSheet.xml";
+            Assert.That(File.Exists(path), Is.EqualTo(true));
+        }
+
+        /// <summary>
+        /// Tests loading cell from XML.
+        /// </summary>
+        [Test]
+        public void TestLoadCellFromXML()
+        {
+            Spreadsheet spreadsheet = new Spreadsheet(5, 5);
+            spreadsheet.CellPropertyChanged += (sender, e) => { };
+            CreateCell testCell = new CreateCell(1, 1, "Test", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            spreadsheet.CreateXML();
+            testCell = new CreateCell(1, 1, "fail", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            spreadsheet.LoadXML();
+            Assert.That(spreadsheet.GetCell(1, 1).CellText, Is.EqualTo("Test"));
+        }
+
+        /// <summary>
+        /// Tests saving multiple cells.
+        /// </summary>
+        [Test]
+        public void TestSaveCellsToXML()
+        {
+            Spreadsheet spreadsheet = new Spreadsheet(10, 10);
+            spreadsheet.CellPropertyChanged += (sender, e) => { };
+            CreateCell testCell = new CreateCell(1, 1, "test", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            testCell = new CreateCell(1, 2, "test1", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            testCell = new CreateCell(1, 3, "test2", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            spreadsheet.CreateXML();
+            string workingDirectory = Environment.CurrentDirectory;
+            string directory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+            string path = directory + @"\Saves\spreadSheet.xml";
+            Assert.That(File.Exists(path), Is.EqualTo(true));
+        }
+
+        /// <summary>
+        /// Tests loading multiple cells from XML.
+        /// </summary>
+        [Test]
+        public void TestLoadCellsFromXML()
+        {
+            Spreadsheet spreadsheet = new Spreadsheet(10, 10);
+            spreadsheet.CellPropertyChanged += (sender, e) => { };
+            CreateCell testCell = new CreateCell(1, 1, "test", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            testCell = new CreateCell(1, 2, "test1", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            testCell = new CreateCell(1, 3, "test2", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            spreadsheet.CreateXML();
+            testCell = new CreateCell(1, 4, "fail", 0xFFFFFFFF);
+            spreadsheet.UpdateCell(testCell);
+            spreadsheet.LoadXML();
+            Assert.That(spreadsheet.GetCell(1, 3).CellText, Is.EqualTo("test2"));
+        }
+
+        /// <summary>
+        /// Tests loading cell with different XML formatting.
+        /// </summary>
+        [Test]
+        public void TestLoadCellDifferentXML()
+        {
+            Spreadsheet spread = new Spreadsheet(10, 10);
+            spread.CellPropertyChanged += (sender, e) => { };
+            XmlDocument doc = new XmlDocument();
+            using (XmlWriter writer = doc.CreateNavigator().AppendChild())
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("spreadSheet");
+                writer.WriteStartElement("cell");
+                writer.WriteStartElement("bgcolor");
+                writer.WriteString("0xFFFFFFFF");
+                writer.WriteEndElement();
+                writer.WriteStartElement("cellText");
+                writer.WriteString("test");
+                writer.WriteEndElement();
+                writer.WriteStartElement("cellName");
+                writer.WriteString("A2");
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+            }
+
+            string workingDirectory = Environment.CurrentDirectory;
+            string directory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+            doc.Save(directory + @"\Saves\spreadSheet.xml");
+            spread.LoadXML();
+            Assert.That(spread.GetCell(1, 1).CellText, Is.EqualTo("test"));
+        }
+
     }
+
+}
 }
