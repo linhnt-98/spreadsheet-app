@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UndoRedoClass.cs" />
     <Compile Include="IUndoRedoCommand.cs" />
     <Compile Include="Nodes\AdditionNode.cs" />
     <Compile Include="Nodes\OperatorNodeFactory.cs" />
