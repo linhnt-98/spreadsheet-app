@@ -33,6 +33,11 @@ namespace SpreadsheetEngine
         private protected string cellTag;
 
         /// <summary>
+        /// the (int) color of a cell. Default -1 which makes it white.
+        /// </summary>
+        private protected int cellColor = -1;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Cell"/> class.
         /// </summary>
         /// <param name="rowIndex">The row index.</param>
@@ -109,5 +114,29 @@ namespace SpreadsheetEngine
             get { return this.cellTag; }
         }
 
+        /// <summary>
+        /// Gets or sets the color of a cell.
+        /// </summary>
+        public uint BGColor
+        {
+            get
+            {
+                return (uint)this.cellColor;
+            }
+
+            set
+            {
+                if (this.cellColor == value)
+                {
+                    return;
+                }
+                else
+                {
+                    this.cellColor = (int)value;
+
+                    this.PropertyChanged(this, new PropertyChangedEventArgs("BGColor"));
+                }
+            }
+        }
     }
 }
