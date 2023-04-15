@@ -28,7 +28,7 @@ namespace SpreadsheetEngine
         {
             get
             {
-                return this.undoStack.Any();
+                return this.undoStack.Count > 0;
             }
         }
 
@@ -39,7 +39,7 @@ namespace SpreadsheetEngine
         {
             get
             {
-                return this.redoStack.Any();
+                return this.redoStack.Count > 0;
             }
         }
 
@@ -106,5 +106,15 @@ namespace SpreadsheetEngine
         {
             this.undoStack.Push(this.redoStack.Pop().Execute(spreadSheet));
         }
+
+        /// <summary>
+        /// clears the undoStack and redoStack.
+        /// </summary>
+        public void ClearUndoRedo()
+        {
+            this.undoStack.Clear();
+            this.redoStack.Clear();
+        }
+
     }
 }
