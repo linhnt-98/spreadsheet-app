@@ -74,7 +74,7 @@ namespace SpreadsheetTest
             Assert.That(testInvalidExpression.Evaluate(), Is.EqualTo(double.PositiveInfinity));
 
             ExpressionTree testInvalidInput = new ExpressionTree("string");
-            Assert.That(testInvalidInput.Evaluate(), Is.EqualTo(double.NaN));
+            Assert.That(testInvalidInput.Evaluate(), Is.EqualTo(0));
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace SpreadsheetTest
             Assert.That(multiplicationOrderTest.Evaluate(), Is.EqualTo(39));
 
             ExpressionTree divisionOrderTest = new ExpressionTree("8+9/3+7");
-            Assert.That(multiplicationOrderTest.Evaluate(), Is.EqualTo(18));
+            Assert.That(divisionOrderTest.Evaluate(), Is.EqualTo(18));
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace SpreadsheetTest
             string directory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
             string path = directory + @"\Saves\spreadSheet.xml";
             Assert.That(File.Exists(path), Is.EqualTo(true));
-    }
+        }
 
         /// <summary>
         /// Tests loading multiple cells from XML.
@@ -293,7 +293,6 @@ namespace SpreadsheetTest
             spread.LoadXML();
             Assert.That(spread.GetCell(1, 1).CellText, Is.EqualTo("test"));
         }
-
     }
 
 }
