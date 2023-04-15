@@ -215,8 +215,6 @@ namespace Spreadsheet_Jason_Nguyen
         /// </summary>
         /// <param name="sender">control for loading the form.</param>
         /// <param name="e">event data.</param>
-        
-        
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var saveFileDialog = new SaveFileDialog();
@@ -229,6 +227,63 @@ namespace Spreadsheet_Jason_Nguyen
                 this.spreadSheet.Save(ofStream);
                 ofStream.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Opens a new LoadFileDialog, sets the settings, then loads the xml.
+        /// </summary>
+        /// <param name="sender">control for loading the form.</param>
+        /// <param name="e">event data.</param>
+        private void LoadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var loadFileDialog = new OpenFileDialog();
+            loadFileDialog.Filter = "XML files (*.xml)|*.xml";
+            loadFileDialog.Title = "Load SpreadSheet";
+
+            if (loadFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // "Clear all spreadsheet data before loading file data. The load-from-file action is NOT a merge with existing content."
+                this.Clear();
+
+                Stream ifStream = new FileStream(loadFileDialog.FileName, FileMode.Open, FileAccess.Read);
+                this.spreadSheet.Load(ifStream);
+                ifStream.Dispose();
+
+                // "Clear the undo/redo stacks after loading a file."
+                this.undoRedo.ClearUndoRedo();
+                this.RefreshButtons();
+            }
+        }
+
+        /// <summary>
+        /// checks if a cell has modified text, value, or bg color. If so, "clear" it.
+        /// </summary>
+        private void Clear()
+        {
+            for (int i = 0; i < this.spreadSheet.RowCount; i++)
+            {
+                for (int j = 0; j < this.spreadSheet.ColumnCount; j++)
+                {
+                    // note that 4294967295 = uint max value, which is also our default color (White/FFFFFFFF/Fortississississississimo musically).
+                    if (this.spreadSheet.GetCell(i, j).Text != string.Empty
+                        || this.spreadSheet.GetCell(i, j).Value != string.Empty
+                        || this.spreadSheet.GetCell(i, j).BGColor != 4294967295)
+                    {
+                        this.spreadSheet.GetCell(i, j).Text = string.Empty;
+                        this.spreadSheet.GetCell(i, j).BGColor = 4294967295;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clears the spreadsheet.
+        /// </summary>
+        /// <param name="sender">control for loading the form.</param>
+        /// <param name="e">event data.</param>
+        private void ClearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Clear();
         }
     }
 }
