@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace SpreadsheetEngine
 {
@@ -127,6 +128,42 @@ namespace SpreadsheetEngine
 
             writeXml.WriteEndElement(); // </spreadsheet>
             writeXml.Close();
+        }
+
+        /// <summary>
+        /// Loads found xml file information (bgcolor and text) into the specified tagged cell.
+        /// </summary>
+        /// <param name="infile">input filestream.</param>
+        public void Load(Stream infile)
+        {
+            XDocument inFile = XDocument.Load(infile);
+
+            // check every start element.
+            foreach (XElement label in inFile.Root.Elements("cell"))
+            {
+                // gets the cell at "celltag".
+                Cell currentCell = this.GetCell(label.Attribute("celltag").Value);
+
+                if (label.Element("bgcolor") != null)
+                {
+                    // sets the current cell's BGcolor to the uint value of the saved xml hexnumber.
+                    currentCell.BGColor = uint.Parse(label.Element("bgcolor").Value, System.Globalization.NumberStyles.HexNumber);
+                }
+
+                if (label.Element("text") != null)
+                {
+                    // sets the current cell's text to the text of the saved xml text.
+                    currentCell.Text = label.Element("text").Value.ToString();
+                }
+            }
+
+            // Spreadsheet is saved/loaded into XML as shown.
+            /*
+            <cell celltag="A1">
+                <bgcolor> ffffffff </bgcolor>
+                <text> 22 </text >
+            </cell>
+            */
         }
 
         /// <summary>
