@@ -293,6 +293,82 @@ namespace SpreadsheetTest
             spread.LoadXML();
             Assert.That(spread.GetCell(1, 1).CellText, Is.EqualTo("test"));
         }
+
+        /// <summary>
+        /// Tests a circular reference with self.
+        /// </summary>
+        [Test]
+        public void TestCircularReference()
+        {
+            Spreadsheet spreadshheet = new Spreadsheet(5, 5);
+            spreadshheet.CellPropertyChanged += (sender, e) => { };
+            CreateCell testCell = new CreateCell(1, 0, "=A1", 0xFFFFFFFF);
+            if (spreadshheet.GetCell(testCell))
+            {
+                spreadshheet.SetCellText(testCell);
+            }
+
+            Assert.That(spreadshheet.GetCell(1, 0).Text, Is.EqualTo("!(circular reference)"));
+        }
+
+        /// <summary>
+        /// Tests two cells with circular reference.
+        /// </summary>
+        [Test]
+        public void TestMultipleCircularReferences()
+        {
+            Spreadsheet spreadshheet = new Spreadsheet(5, 5);
+            spreadshheet.CellPropertyChanged += (sender, e) => { };
+            CreateCell testCell = new CreateCell(1, 0, "1", 0xFFFFFFFF);
+            spreadshheet.OnPropertyChanged(testCell);
+            testCell = new CreateCell(1, 1, "=A1", 0xFFFFFFFF);
+            if (spreadshheet.GetCell(testCell))
+            {
+                spreadshheet.UpdateCell(testCell);
+            }
+
+            testCell = new CreateCell(1, 0, "=A2", 0xFFFFFFFF);
+            if (spreadshheet.GetCell(testCell))
+            {
+                spreadshheet.SetCellText(testCell);
+            }
+
+            Assert.That(spreadshheet.GetCell(1, 0).CellText, Is.EqualTo("!(circular reference)"));
+        }
+
+        /// <summary>
+        /// Tests invalid cell reference with short expression.
+        /// </summary>
+        [Test]
+        public void TestInvalidShortReference()
+        {
+            Spreadsheet spreadshheet = new Spreadsheet(5, 5);
+            spreadshheet.CellPropertyChanged += (sender, e) => { };
+            CreateCell testCell = new CreateCell(1, 0, "=a1", 0xFFFFFFFF);
+            if (spreadshheet.GetCell(testCell.Text, testCell.ColumnIndex, testCell.RowIndex))
+            {
+                spreadshheet.SetCellText(testCell);
+            }
+
+            Assert.That(spreadshheet.GetCell(1, 0).Text, Is.EqualTo("!(bad reference)"));
+        }
+
+        /// <summary>
+        /// Tests invalid cell reference with long expression.
+        /// </summary>
+        [Test]
+        public void TestInvalidLongReference()
+        {
+            Spreadsheet spreadshheet = new Spreadsheet(5, 5);
+            spreadshheet.CellPropertyChanged += (sender, e) => { };
+            CreateCell testCell = new CreateCell(1, 0, "=A1+B2+B132", 0xFFFFFFFF);
+            if (spreadshheet.GetCell(testCell.Text, testCell.ColumnIndex, testCell.RowIndex))
+            {
+                spreadshheet.SetCellText(testCell);
+            }
+
+            Assert.That(spreadshheet.GetCell(1, 0).Text, Is.EqualTo("!(bad reference)"));
+        }
     }
 
 }
