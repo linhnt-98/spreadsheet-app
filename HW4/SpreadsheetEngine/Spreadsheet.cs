@@ -394,35 +394,32 @@ namespace SpreadsheetEngine
                     return;
                 }
 
-                if (this.spreadsheetDictionary.ContainsKey(newCell.CellTag) == false)
+                if (!this.spreadsheetDictionary.ContainsKey(newCell.CellTag))
                 {
                     continue;
                 }
 
                 string currentCell = newCell.CellTag;
 
-                // loop through the dependancy dictionary.
-                for (int i = 0; i < this.spreadsheetDictionary.Count; i++)
+               
+                // loop through the dependantcells of the current cell.
+                foreach (string dependentCell in this.spreadsheetDictionary[currentCell])
                 {
-                    // loop through the dependantcells of the current cell.
-                    foreach (string dependentCell in this.spreadsheetDictionary[currentCell])
+                    if (variableName == dependentCell)
                     {
-                        if (variableName == dependentCell)
-                        {
-                            // if our variablename is the same as the dependantCell, set error values.
-                            error = true;
-                            newCell.SetValue("!(circular reference)");
-                            this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
-                            return;
-                        }
-
-                        if (this.spreadsheetDictionary.ContainsKey(dependentCell) == false)
-                        {
-                            continue;
-                        }
-
-                        currentCell = dependentCell;
+                        // if our variablename is the same as the dependantCell, set error values.
+                        error = true;
+                        newCell.SetValue("!(circular reference)");
+                        this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
+                        return;
                     }
+
+                    if (this.spreadsheetDictionary.ContainsKey(dependentCell) == false)
+                    {
+                        continue;
+                    }
+
+                    currentCell = dependentCell;
                 }
             }
 
