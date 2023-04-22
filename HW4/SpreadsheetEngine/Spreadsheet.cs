@@ -293,6 +293,7 @@ namespace SpreadsheetEngine
         /// <param name="cell">a cell.</param>
         private void Eval(Cell cell)
         {
+            bool error = false;
             CreateCell newCell = cell as CreateCell;
 
             if (string.IsNullOrEmpty(newCell.Text))
@@ -301,7 +302,14 @@ namespace SpreadsheetEngine
             }
             else if (newCell.Text[0] == '=' && newCell.Text.Length >= 3)
             {
-                this.SetExp(newCell, cell);
+                // pass our error boolean in by reference, so it gets modified in here.
+                this.SetExp(newCell, cell, ref error);
+
+                // if error was set to true by the SetExp function, kill this void function.
+                if (error == true)
+                {
+                    return;
+                }
             }
             else
             {
@@ -322,9 +330,9 @@ namespace SpreadsheetEngine
         /// </summary>
         /// <param name="newCell">createcell object.</param>
         /// <param name="cell">a cell.</param>
-        private void SetExp(CreateCell newCell, Cell cell)
+        private void SetExp(CreateCell newCell, Cell cell, ref bool error)
         {
-            // make new instance of expressiontree after the = symbol
+            // makes new instance of expressiontree, after the =
             ExpressionTree exptree = new ExpressionTree(newCell.Text.Substring(1));
 
             // create array of variables(from the keys in our expressiontrees dictionary)
@@ -332,26 +340,93 @@ namespace SpreadsheetEngine
 
             foreach (string variableName in variables)
             {
+                if (this.GetCell(variableName) == null)
+                {
+                    // The cell formula could reference something that doesn’t exist on the spreadsheet. This could
+                    // mean it’s a cell name that’s just beyond the range of what our spreadsheet supports, such as
+                    // “Z12345”. It could also just be a bad cell name, such as “Ba”. Set the cell value to an error
+                    // message as opposed to treating the non-existent cell’s value as 0.
+                    error = true;
+                    newCell.SetValue("!(bad reference)");
+                    this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
+                    return;
+                }
+
                 Cell variableCell = this.GetCell(variableName);
 
                 if (string.IsNullOrEmpty(variableCell.Value))
                 {
-                    // if the cell is empty, return NaN when setting something equal. 
-                    exptree.SetVariable(variableCell.CellTag, double.NaN);
+                    // if the cell is empty, setting something equal will return 0.
+                    exptree.SetVariable(variableCell.CellTag, 0);
                 }
                 else if (!double.TryParse(variableCell.Value, out double value))
                 {
-                    // The numerical value parsed if double. TryParse on the value string succeeds
+                    // Since a cell’s “Value” property is a string, and you will need a double when setting variable
+                    // values during formula evaluation, consider the numerical(double) value of a cell to be:
+                    // The numerical value parsed if double.TryParse on the value string succeeds
                     // 0 otherwise
                     exptree.SetVariable(variableName, 0);
                 }
                 else
                 {
-                    // if cell is filled with valid double, set the cell to that double.
+                    // if cell is filled with valid double (from that out statement ^), set the cell to that double.
                     exptree.SetVariable(variableName, value);
+                }
+
+                if (variableName == newCell.CellTag)
+                {
+                    // if our variablename is the same as the reference celltag, set error values.
+                    error = true;
+                    newCell.SetValue("!(self reference)");
+                    this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
+                    return;
                 }
             }
 
+            foreach (string variableName in variables)
+            {
+                if (variableName == newCell.CellTag)
+                {
+                    // if our variablename is the same as the reference celltag, set error values.
+                    error = true;
+                    newCell.SetValue("!(circular reference)");
+                    this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
+                    return;
+                }
+
+                if (this.spreadsheetDictionary.ContainsKey(newCell.CellTag) == false)
+                {
+                    continue;
+                }
+
+                string currentCell = newCell.CellTag;
+
+                // loop through the dependancy dictionary.
+                for (int i = 0; i < this.spreadsheetDictionary.Count; i++)
+                {
+                    // loop through the dependantcells of the current cell.
+                    foreach (string dependentCell in this.spreadsheetDictionary[currentCell])
+                    {
+                        if (variableName == dependentCell)
+                        {
+                            // if our variablename is the same as the dependantCell, set error values.
+                            error = true;
+                            newCell.SetValue("!(circular reference)");
+                            this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
+                            return;
+                        }
+
+                        if (this.spreadsheetDictionary.ContainsKey(dependentCell) == false)
+                        {
+                            continue;
+                        }
+
+                        currentCell = dependentCell;
+                    }
+                }
+            }
+
+            // if it makes it down here, everything worked correctly.
             newCell.SetValue(exptree.Evaluate().ToString());
             this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
         }
